@@ -1,0 +1,105 @@
+/* Blog.css */
+
+/* General styles for the blog page */
+.blog-page {
+  font-family: Arial, sans-serif; /* Font for the page */
+  background-color: #f9f9f9; /* Light background color */
+  padding: 20px; /* Padding around the page */
+}
+
+/* Header styles */
+.blog-header {
+  text-align: center; /* Center align header */
+  margin-bottom: 40px; /* Space below header */
+}
+
+.blog-title {
+  font-size: 2.5rem; /* Large font size for title */
+  color: #333; /* Dark color */
+}
+
+/* Container for posts and sidebar */
+.blog-container {
+  display: flex; /* Use flexbox for layout */
+  justify-content: space-between; /* Space between main content and sidebar */
+}
+
+/* Styles for blog posts */
+.blog-posts {
+  flex: 3; /* Take up 3/4 of the width */
+  margin-right: 20px; /* Space between posts and sidebar */
+}
+
+.blog-post {
+  background: white; /* White background for posts */
+  border-radius: 8px; /* Rounded corners */
+  padding: 20px; /* Padding inside post */
+  margin-bottom: 20px; /* Space between posts */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.blog-image {
+  width: 100%; /* Full width image */
+  border-radius: 8px; /* Rounded corners for images */
+}
+
+.post-title {
+  font-size: 1.5rem; /* Title font size */
+  margin: 10px 0; /* Space above and below title */
+}
+
+.post-date {
+  font-size: 0.9rem; /* Smaller font for date */
+  color: gray; /* Gray color for date */
+}
+
+.post-excerpt {
+  margin: 10px 0; /* Space above and below excerpt */
+}
+
+/* Button styles */
+.read-more {
+  background-color: #007bff; /* Button background color */
+  color: white; /* Button text color */
+  border: none; /* No border */
+  padding: 10px 15px; /* Padding for button */
+  border-radius: 5px; /* Rounded corners for button */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+.read-more:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Sidebar styles */
+.blog-sidebar {
+  flex: 1; /* Take up 1/4 of the width */
+  background: #f1f1f1; /* Light background for sidebar */
+  padding: 20px; /* Padding inside sidebar */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.sidebar-title {
+  font-size: 1.5rem; /* Font size for sidebar titles */
+  margin-bottom: 10px; /* Space below sidebar titles */
+}
+
+.category-list,
+.recent-posts {
+  list-style-type: none; /* No bullets for lists */
+  padding: 0; /* Remove padding */
+}
+
+.category-list li,
+.recent-posts li {
+  margin: 5px 0; /* Space between list items */
+}
+
+/* Footer styles */
+.blog-footer {
+  text-align: center; /* Center align footer */
+  margin-top: 40px; /* Space above footer */
+  font-size: 0.9rem; /* Smaller font size for footer */
+  color: #666; /* Gray color */
+}
