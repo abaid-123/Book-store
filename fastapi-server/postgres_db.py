@@ -14,22 +14,31 @@ load_dotenv()
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@gmail.com").lower()
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin1")
 
-_raw_url = os.getenv(
-    "DATABASE_URL",
-    "postgresql://postgres:postgres@127.0.0.1:5432/bookstore",
-)
-if _raw_url.startswith("postgresql://"):
-    DATABASE_URL = _raw_url.replace("postgresql://", "postgresql+asyncpg://", 1)
-elif _raw_url.startswith("postgres://"):
-    DATABASE_URL = _raw_url.replace("postgres://", "postgresql+asyncpg://", 1)
-else:
-    DATABASE_URL = _raw_url
 
-_db_url = make_url(DATABASE_URL)
-for _key in ("sslmode", "ssl", "channel_binding"):
-    if _key in _db_url.query:
-        _db_url = _db_url.difference_update_query([_key])
-DATABASE_URL = _db_url.render_as_string(hide_password=False)
+def _clean_database_url(raw: str) -> str:
+    value = (raw or "").strip().strip("'\"")
+    if value.lower().startswith("psql "):
+        value = value[5:].strip().strip("'\"")
+    if value.startswith("postgresql://"):
+        value = value.replace("postgresql://", "postgresql+asyncpg://", 1)
+    elif value.startswith("postgres://"):
+        value = value.replace("postgres://", "postgresql+asyncpg://", 1)
+    try:
+        parsed = make_url(value)
+        for key in ("sslmode", "ssl", "channel_binding"):
+            if key in parsed.query:
+                parsed = parsed.difference_update_query([key])
+        return parsed.render_as_string(hide_password=False)
+    except Exception:
+        return "postgresql+asyncpg://postgres:postgres@127.0.0.1:5432/bookstore"
+
+
+DATABASE_URL = _clean_database_url(
+    os.getenv(
+        "DATABASE_URL",
+        "postgresql://postgres:postgres@127.0.0.1:5432/bookstore",
+    )
+)
 
 engine = None
 SessionLocal: async_sessionmaker[AsyncSession] | None = None

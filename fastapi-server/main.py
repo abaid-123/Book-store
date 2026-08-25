@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, PlainTextResponse
 
-from postgres_db import close_postgres, init_postgres
+from postgres_db import SessionLocal, close_postgres, init_postgres
 from routers import auth_router, books_router, reviews_router, uploads_router
 from routers.uploads import COVERS_DIR
 
@@ -38,11 +38,25 @@ async def lifespan(_app: FastAPI):
         await close_postgres()
 
 
-app = FastAPI(
-    title="Book Inventory API",
-    description="Book Store API backed by PostgreSQL.",
-    lifespan=lifespan,
-)
+app_kwargs = {
+    "title": "Book Inventory API",
+    "description": "Book Store API backed by PostgreSQL.",
+}
+if not os.getenv("VERCEL"):
+    app_kwargs["lifespan"] = lifespan
+
+app = FastAPI(**app_kwargs)
+
+
+@app.middleware("http")
+async def ensure_database(request: Request, call_next):
+    COVERS_DIR.mkdir(parents=True, exist_ok=True)
+    if SessionLocal is None:
+        try:
+            await init_postgres()
+        except Exception as exc:
+            print("postgres init failed:", exc)
+    return await call_next(request)
 
 app.add_middleware(
     CORSMiddleware,
