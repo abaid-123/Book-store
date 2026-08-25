@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from uuid import uuid4
 
@@ -6,7 +7,10 @@ from fastapi.responses import FileResponse
 
 router = APIRouter(tags=["uploads"])
 
-UPLOAD_ROOT = Path(__file__).resolve().parent.parent / "uploads"
+if os.getenv("VERCEL"):
+    UPLOAD_ROOT = Path("/tmp/uploads")
+else:
+    UPLOAD_ROOT = Path(__file__).resolve().parent.parent / "uploads"
 COVERS_DIR = UPLOAD_ROOT / "covers"
 ALLOWED_COVER_TYPES = {
     "image/jpeg": ".jpg",

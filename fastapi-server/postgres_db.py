@@ -24,6 +24,12 @@ elif _raw_url.startswith("postgres://"):
 else:
     DATABASE_URL = _raw_url
 
+_db_url = make_url(DATABASE_URL)
+for _key in ("sslmode", "ssl", "channel_binding"):
+    if _key in _db_url.query:
+        _db_url = _db_url.difference_update_query([_key])
+DATABASE_URL = _db_url.render_as_string(hide_password=False)
+
 engine = None
 SessionLocal: async_sessionmaker[AsyncSession] | None = None
 

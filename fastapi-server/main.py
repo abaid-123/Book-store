@@ -21,6 +21,9 @@ if not FRONTEND_ORIGINS:
     FRONTEND_ORIGINS = ["*"]
 
 
+API_PREFIX = "/api" if os.getenv("VERCEL") else ""
+
+
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     COVERS_DIR.mkdir(parents=True, exist_ok=True)
@@ -51,15 +54,15 @@ async def http_exception_handler(_request: Request, exc: HTTPException) -> JSONR
     return JSONResponse(status_code=exc.status_code, content={"message": str(exc.detail)})
 
 
-@app.get("/", response_class=PlainTextResponse)
+@app.get(API_PREFIX or "/", response_class=PlainTextResponse)
 async def home() -> str:
     return "Hello world!"
 
 
-app.include_router(books_router)
-app.include_router(reviews_router)
-app.include_router(auth_router)
-app.include_router(uploads_router)
+app.include_router(books_router, prefix=API_PREFIX)
+app.include_router(reviews_router, prefix=API_PREFIX)
+app.include_router(auth_router, prefix=API_PREFIX)
+app.include_router(uploads_router, prefix=API_PREFIX)
 
 
 if __name__ == "__main__":

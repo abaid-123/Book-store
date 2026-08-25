@@ -1,41 +1,27 @@
 # Book Store
 
-Online bookstore: browse and search books, save favorites, leave reviews, and manage inventory from an admin dashboard.
+Online bookstore with a React shop and FastAPI admin API. Live host: **Vercel** (one URL). Database: **Neon**.
 
-- **Frontend:** React (Vite) in `mern-client`
-- **Backend:** FastAPI in `fastapi-server`
-- **Database:** PostgreSQL
+## Go live
 
-## Run locally
+1. Push this repo to GitHub.
+2. Vercel project settings:
+   - **Root Directory:** empty (repository root)
+   - Environment variables:
+     - `DATABASE_URL` — Neon URL
+     - `SKIP_DB_CREATE` = `1`
+     - `ADMIN_EMAIL` = `admin@gmail.com`
+     - `ADMIN_PASSWORD` = your password
+     - `JWT_SECRET` = a long random string
+     - `FRONTEND_ORIGIN` = `*`
+3. Redeploy. Site: `https://your-app.vercel.app` — API: `https://your-app.vercel.app/api/all-books`
 
-**API** (http://127.0.0.1:5000)
+## Local
 
 ```bash
 cd fastapi-server
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-copy .env.example .env
 python main.py
-```
 
-**Website** (http://localhost:5173)
-
-```bash
 cd mern-client
-npm install
-copy .env.example .env
 npm run dev
 ```
-
-Admin login: `admin@gmail.com` / password from `.env` (`ADMIN_PASSWORD`, default `admin1`).
-
-## Go live (Render)
-
-1. Push this repo to GitHub.
-2. Open [Render Blueprint](https://dashboard.render.com/blueprints) and connect `Book-store`.
-3. After deploy, copy the **bookstore-web** URL — that is the live site.
-4. In **bookstore-api** Environment, set `FRONTEND_ORIGIN` to that website URL.
-5. Sign in with the generated `ADMIN_PASSWORD` (Render dashboard → Environment).
-
-If Render’s free database is not available, create a free Postgres database on [Neon](https://neon.tech), then paste its connection string into `DATABASE_URL` on the API service.
