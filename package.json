@@ -2,6 +2,6 @@
   "name": "book-store",
   "private": true,
   "scripts": {
-    "build": "npm run build --prefix mern-client"
+    "build": "npm run build --prefix mern-client && node scripts/copy-frontend.mjs"
   }
 }
