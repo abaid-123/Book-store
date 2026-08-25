@@ -17,10 +17,8 @@ const FavBook = () => {
           Find Your Favourite <span className="text-blue-700">Book Here!</span>
         </h2>
         <p className="mb-10 text-lg md:w-5/6">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium
-          delectus et repellendus est? Mollitia consequuntur, omnis adipisci
-          corporis dignissimos eum. Nam, reprehenderit inventore? Minima,
-          voluptas delectus nobis error velit corporis!
+          Browse bestsellers, filter by genre, and pick a title with author,
+          rating, and year on the same page. Explore More opens the full shop.
         </p>
         <div className="flex flex-col sm:flex-row justify-between gap-6 md:w-3/4 my-5">
           <div>

@@ -11,8 +11,6 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.3",
-    "caniuse-lite": "^1.0.30001749",
-    "firebase": "^10.14.0",
     "flowbite": "^2.5.2",
     "flowbite-react": "^0.10.2",
     "localforage": "^1.10.0",

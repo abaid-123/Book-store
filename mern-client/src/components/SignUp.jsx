@@ -1,116 +1,98 @@
 import React, { useContext, useState } from "react";
 import { Label, TextInput } from "flowbite-react";
-import { AuthContext } from "../contects/AuthProvider"; // Fixed the import path
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import googleimage from "../assets/google-logo.svg";
+import { AuthContext } from "../contects/AuthProvider";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignUp = () => {
-  const { createUser, loginwithGoogle } = useContext(AuthContext);
-  const [error, setError] = useState(""); // Fixed the state setter name
-
-  const location = useLocation();
+  const { createUser } = useContext(AuthContext);
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
   const navigate = useNavigate();
 
-  // Set 'from' to the previous location or default to "/"
-  const from = location.state?.from?.pathname || "/";
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError("");
+    const email = event.target.email.value.trim().toLowerCase();
+    const password = event.target.password.value;
 
-  // Handle form submission
-  const handleSubmit = (event) => {
-    event.preventDefault(); // Prevent page reload
-    const form = event.target;
-    const email = form.email.value; // Access email from form
-    const password = form.password.value; // Access password from form
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
 
-    // Firebase create user method
-    createUser(email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log("User signed up successfully:", user); // Debug log
-        alert("Sign up successful!");
-
-        // Navigate to the 'from' path (home or previous location)
-        navigate(from, { replace: true });
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        console.log("Sign up error:", errorMessage); // Debug log
-        setError(errorMessage);
+    setBusy(true);
+    try {
+      await createUser(email, password);
+      navigate("/login", {
+        replace: true,
+        state: {
+          email,
+          info: "Account created. Please sign in with your email and password.",
+        },
       });
-  };
-
-  const handleregister = () => {
-    loginwithGoogle().then((result) => {
-      const user = result.user;
-      alert("login succefully");
-      navigate(from, { replace: true }).catch((error) => {
-        const errorMessage = error.message;
-        console.log("Sign up error:", errorMessage); // Debug log
-        setError(errorMessage);
-      });
-    });
+    } catch (err) {
+      setError(err.message || "Sign up failed.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-4 bg-gray-100">
-      <div className="bg-white shadow-lg p-8 rounded-lg max-w-lg w-full border border-gray-200">
-        <h2 className="font-bold text-3xl mb-8 text-center">Sign Up</h2>
+    <div className="bg-teal-100 min-h-screen">
+      <div className="px-4 lg:px-24 pt-32 pb-16 flex justify-center">
+        <div className="bg-white p-8 sm:p-10 rounded-2xl max-w-lg w-full border border-slate-200 shadow-sm">
+          <p className="uppercase tracking-widest text-blue-700 font-semibold text-center mb-2">
+            Book Store
+          </p>
+          <h2 className="font-bold text-3xl sm:text-4xl mb-3 text-center text-black">
+            Create account
+          </h2>
+          <p className="text-center text-gray-600 mb-8">
+            Create an account, then sign in with your email and password.
+          </p>
 
-        {/* Display error message */}
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
-        {/* Sign Up form */}
-        <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
-          {/* Email */}
-          <div>
-            <div className="mb-1 block">
-              <Label htmlFor="email" value="Email" />
+          <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+            <div>
+              <div className="mb-1 block">
+                <Label htmlFor="email" value="Email" />
+              </div>
+              <TextInput
+                id="email"
+                name="email"
+                type="email"
+                placeholder="you@email.com"
+                required
+              />
             </div>
-            <TextInput
-              id="email"
-              name="email"
-              type="email"
-              placeholder="Enter your email"
-              required
-            />
-          </div>
-
-          {/* Password */}
-          <div>
-            <div className="mb-1 block">
-              <Label htmlFor="password" value="Password" />
+            <div>
+              <div className="mb-1 block">
+                <Label htmlFor="password" value="Password" />
+              </div>
+              <TextInput
+                id="password"
+                name="password"
+                type="password"
+                placeholder="At least 6 characters"
+                required
+              />
             </div>
-            <TextInput
-              id="password"
-              name="password"
-              type="password"
-              placeholder="Enter your password"
-              required
-            />
-          </div>
+            <button
+              className="mt-2 bg-blue-700 py-3 text-white font-semibold rounded-lg hover:bg-black disabled:bg-gray-400"
+              type="submit"
+              disabled={busy}
+            >
+              {busy ? "Please wait..." : "Sign up"}
+            </button>
+          </form>
 
-          {/* Submit Button */}
-          <button
-            className="mt-5 bg-teal-500 py-2 text-white rounded"
-            type="submit"
-          >
-            Sign Up
-          </button>
-        </form>
-
-        {/* Login prompt */}
-        <p className="my-4 text-center">
-          If you have an account, please{" "}
-          <Link to="/login" className="text-teal-500 underline">
-            login 
-          </Link>
-          {" "}here.
-        </p>
-        <hr />
-        <div className="flex w-full flex-col items-center gap-3 mt-5">
-          <button onClick={handleregister} className="block">
-            <img className="w-12 h-12 inline-block" src={googleimage} alt="" />
-            Login with Google
-          </button>
+          <p className="my-4 text-center text-gray-600">
+            Already have an account?{" "}
+            <Link to="/login" className="text-blue-700 font-semibold hover:underline">
+              Sign in
+            </Link>
+          </p>
         </div>
       </div>
     </div>

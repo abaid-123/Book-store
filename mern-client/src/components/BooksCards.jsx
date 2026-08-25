@@ -8,6 +8,7 @@ import { FaCartShopping } from "react-icons/fa6";
 
 // Import required modules
 import { Pagination } from "swiper/modules";
+import { bookCoverUrl } from "../api/config";
 
 const BooksCards = ({ headline, books }) => {
   return (
@@ -46,7 +47,7 @@ const BooksCards = ({ headline, books }) => {
                 <div className="relative">
                   {/* Added fixed height and object-cover to ensure uniform image size */}
                   <img
-                    src={book.imgURL}
+                    src={bookCoverUrl(book.imgURL)}
                     alt={book.title}
                     className="h-64 w-full object-cover"
                   />

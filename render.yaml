@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: bookstore-api
+    runtime: python
+    plan: free
+    rootDir: fastapi-server
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: SKIP_DB_CREATE
+        value: "1"
+      - key: FRONTEND_ORIGIN
+        value: "*"
+      - key: ADMIN_EMAIL
+        value: admin@gmail.com
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: bookstore-db
+          property: connectionString
+
+  - type: web
+    name: bookstore-web
+    runtime: static
+    plan: free
+    rootDir: mern-client
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: bookstore-api
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+
+databases:
+  - name: bookstore-db
+    plan: free

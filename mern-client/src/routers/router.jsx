@@ -9,12 +9,17 @@ import DashboardLayout from "../dashboard/DashboardLayout";
 import Dashboard from "../dashboard/Dashboard";
 import Uploadbook from "../dashboard/Uploadbook";
 import ManageBook from "../dashboard/ManageBook";
+import ManageCategories from "../dashboard/ManageCategories";
+import ManageReviews from "../dashboard/ManageReviews";
+import ManageUsers from "../dashboard/ManageUsers";
+import ChangePassword from "../dashboard/ChangePassword";
 import EditBooks from "../dashboard/EditBooks";
 import SignUp from "../components/SignUp";
 import Login from "../components/Login";
 import PrivateRouter from "../PrivateRouter/PrivateRouter";
-import Logout from "../components/Logout";
 import Contact from "../components/Contact";
+import Account from "../components/Account";
+import { apiUrl } from "../api/config";
 
 const router = createBrowserRouter([
   {
@@ -38,10 +43,31 @@ const router = createBrowserRouter([
         element: <Contact />,
       },
       {
+        path: "/account",
+        element: <Account />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        path: "/sign-up",
+        element: <SignUp />,
+      },
+      {
+        path: "/admin/login",
+        element: <Login />,
+      },
+      {
         path: "/book/:id",
         element: <SingleBook />,
-        loader: ({ params }) =>
-          fetch(`http://localhost:5000/book/${params.id}`),
+        loader: async ({ params }) => {
+          const res = await fetch(apiUrl(`/book/${params.id}`));
+          if (!res.ok) {
+            throw new Response("Book not found", { status: res.status });
+          }
+          return res.json();
+        },
       },
     ],
   },
@@ -51,7 +77,11 @@ const router = createBrowserRouter([
     element: <PrivateRouter><DashboardLayout /></PrivateRouter>, // Protect the entire dashboard layout
     children: [
       {
-        path: "dashboard", 
+        index: true,
+        element: <Dashboard />,
+      },
+      {
+        path: "dashboard",
         element: <Dashboard />,
       },
       {
@@ -63,26 +93,29 @@ const router = createBrowserRouter([
         element: <ManageBook />,
       },
       {
+        path: "categories",
+        element: <ManageCategories />,
+      },
+      {
+        path: "reviews",
+        element: <ManageReviews />,
+      },
+      {
+        path: "users",
+        element: <ManageUsers />,
+      },
+      {
+        path: "password",
+        element: <ChangePassword />,
+      },
+      {
         path: "edit-books/:id",
         element: <EditBooks />,
         loader: ({ params }) =>
-          fetch(`http://localhost:5000/book/${params.id}`),
+          fetch(apiUrl(`/book/${params.id}`)),
       },
     ],
   },
-  // Public Routes
-  {
-    path: "/sign-up",
-    element: <SignUp />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/logout",
-    element: <Logout />,
-  }
 ]);
 
 export default router;
