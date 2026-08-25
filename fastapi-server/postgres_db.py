@@ -7,6 +7,7 @@ from sqlalchemy import DateTime, Integer, String, Text, func, select, text
 from sqlalchemy.engine.url import make_url
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.pool import NullPool
 
 load_dotenv()
 
@@ -179,7 +180,10 @@ def _is_local_db() -> bool:
 def _engine_kwargs() -> dict:
     if _is_local_db():
         return {}
-    return {"connect_args": {"ssl": True}}
+    return {
+        "poolclass": NullPool,
+        "connect_args": {"ssl": True, "statement_cache_size": 0},
+    }
 
 
 async def _ensure_database() -> None:
@@ -278,6 +282,8 @@ def _copy_mongo_docs() -> tuple[list[dict], list[dict]]:
 
 
 async def migrate_from_mongo_if_needed() -> None:
+    if os.getenv("VERCEL") or os.getenv("SKIP_MONGO", "").lower() in {"1", "true", "yes"}:
+        return
     assert SessionLocal is not None
     async with SessionLocal() as session:
         book_count = await session.scalar(select(func.count()).select_from(Book))
@@ -331,9 +337,14 @@ async def init_postgres() -> None:
         print("postgres connected")
     except Exception as exc:
         print(
-            "PostgreSQL connection failed. Set DATABASE_URL in fastapi-server/.env "
-            "(example: postgresql://USER:PASSWORD@127.0.0.1:5432/bookstore)"
+            "PostgreSQL connection failed. Set DATABASE_URL "
+            "(Neon URL on Vercel Environment Variables)."
         )
+        print("postgres error:", exc)
+        engine = None
+        SessionLocal = None
+        if os.getenv("VERCEL"):
+            return
         raise RuntimeError("PostgreSQL is not connected") from exc
 
 
@@ -349,7 +360,20 @@ async def close_postgres() -> None:
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
+    global SessionLocal
     if SessionLocal is None:
-        raise RuntimeError("PostgreSQL is not connected")
+        try:
+            await init_postgres()
+        except Exception:
+            SessionLocal = None
+    if SessionLocal is None:
+        from fastapi import HTTPException
+
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "message": "Database is not connected. Add DATABASE_URL in Vercel Environment Variables."
+            },
+        )
     async with SessionLocal() as session:
         yield session

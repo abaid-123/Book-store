@@ -27,9 +27,15 @@ API_PREFIX = "/api" if os.getenv("VERCEL") else ""
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     COVERS_DIR.mkdir(parents=True, exist_ok=True)
-    await init_postgres()
+    try:
+        await init_postgres()
+    except Exception as exc:
+        print("postgres init failed:", exc)
+        if not os.getenv("VERCEL"):
+            raise
     yield
-    await close_postgres()
+    if not os.getenv("VERCEL"):
+        await close_postgres()
 
 
 app = FastAPI(

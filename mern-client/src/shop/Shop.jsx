@@ -29,7 +29,7 @@ const Shop = () => {
         setError("");
       })
       .catch(() => {
-        setError("Books could not be loaded. Start the FastAPI server and refresh.");
+        setError("Books could not be loaded. Refresh, or check the live API.");
       })
       .finally(() => setLoading(false));
   }, []);
