@@ -13,8 +13,8 @@ const Banner = () => {
   };
 
   return (
-    <div className="px-4 lg:px-24 bg-teal-100 flex items-center">
-      <div className="flex w-full flex-col md:flex-row items-center gap-12 py-40 justify-between">
+    <div className="px-4 lg:px-24 bg-teal-100 flex items-center pt-20">
+      <div className="flex w-full flex-col md:flex-row items-center gap-12 py-16 lg:py-24 justify-between">
         <div className="space-y-8 md:w-1/2 h-full">
           <h2 className="text-4xl font-bold text-black leading-snug">
             Buy and Sell your books

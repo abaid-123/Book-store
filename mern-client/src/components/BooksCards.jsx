@@ -16,7 +16,9 @@ const BooksCards = ({ headline, books }) => {
       <h2 className="text-5xl text-center font-bold text-black my-5">
         {headline}
       </h2>
-      {/* Reduced the margin on top to minimize the gap */}
+      {(!books || books.length === 0) && (
+        <p className="text-center text-gray-500">Loading books...</p>
+      )}
       <div className="mt-6">
         <Swiper
           slidesPerView={1}
@@ -39,9 +41,9 @@ const BooksCards = ({ headline, books }) => {
             },
           }}
           modules={[Pagination]}
-          className="mySwiper w-full h-full"
+          className="mySwiper w-full"
         >
-          {books.map((book) => (
+          {(Array.isArray(books) ? books : []).map((book) => (
             <SwiperSlide key={book._id}>
               <Link to={`/book/${book._id}`}>
                 <div className="relative">

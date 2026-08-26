@@ -6,11 +6,14 @@ const BestSellerBooks = () => {
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
-    fetch(apiUrl('/all-books'))
-      .then(res => res.json())
-      .then(data => setBooks(data.slice(0,8))) // Setting the fetched data in state
-      .catch(err => console.error('Error fetching books:', err));
-  }, []); // Adding dependency array to run the effect only once
+    fetch(apiUrl("/all-books"))
+      .then((res) => {
+        if (!res.ok) throw new Error("Could not load books");
+        return res.json();
+      })
+      .then((data) => setBooks(Array.isArray(data) ? data.slice(0, 8) : []))
+      .catch((err) => console.error("Error fetching books:", err));
+  }, []);
 
   return (
     <div>
