@@ -21,7 +21,7 @@ if not FRONTEND_ORIGINS:
     FRONTEND_ORIGINS = ["*"]
 
 
-API_PREFIX = "/api" if os.getenv("VERCEL") else ""
+API_PREFIX = ""
 
 
 @asynccontextmanager

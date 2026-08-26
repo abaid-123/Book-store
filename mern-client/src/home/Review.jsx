@@ -81,9 +81,7 @@ const Review = () => {
       })
       .catch(() => {
         setReviews([]);
-        setLoadError(
-          "Reviews could not load. Start FastAPI with python main.py, then refresh."
-        );
+        setLoadError("Reviews could not load. Check the live API, then refresh.");
       })
       .finally(() => setLoading(false));
   };
