@@ -1,6 +1,8 @@
 export const API_URL =
   import.meta.env.VITE_API_URL ||
-  (import.meta.env.PROD ? "/api" : "http://localhost:5000");
+  (import.meta.env.PROD
+    ? "https://book-store-backend-abaid-ur-rehmans-projects.vercel.app"
+    : "http://localhost:5000");
 
 export function apiUrl(path) {
   const prefix = path.startsWith("/") ? path : `/${path}`;
